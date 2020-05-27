@@ -1,7 +1,17 @@
 #content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+	text-align: center;
+}
+
+img {
+	width: 500px;
+	height: auto;
+}
+
+.gallery {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
 }
 
 #greeting-container {
