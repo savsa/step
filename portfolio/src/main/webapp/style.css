@@ -3,16 +3,20 @@
 }
 
 img {
-	width: 500px;
 	height: auto;
 	margin-top: 30px;
+	width: 500px;
+}
+
+.profile {
+	border-radius: 100%;
 }
 
 .gallery {
+	align-items: center;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	align-items: center;
 }
 
 #greeting-container {
