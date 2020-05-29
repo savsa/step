@@ -26,3 +26,13 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+async function getComments() {
+  const response = await fetch('/data');
+  const json = await response.json();
+  let comments = json.comments;
+  const commentContainer = document.getElementById('comments');
+  for (const comment of comments) {
+    commentContainer.innerHTML += comment;
+  }
+}
