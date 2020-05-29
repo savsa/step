@@ -30,9 +30,8 @@ function addRandomGreeting() {
 async function getComments() {
   const response = await fetch('/data');
   const json = await response.json();
-  let comments = json.comments;
   const commentContainer = document.getElementById('comments');
-  for (const comment of comments) {
+  for (const comment of json.comments) {
     commentContainer.innerHTML += comment;
   }
 }

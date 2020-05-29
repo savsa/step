@@ -35,7 +35,7 @@ public class DataServlet extends HttpServlet {
     comments.add("<p>Hello</p>");
     comments.add("<p>Bye</p>");
 
-  JSONObject jsonObject;
+    JSONObject jsonObject;
     try {
       jsonObject = new JSONObject();
     } catch (Exception e) {
@@ -43,14 +43,12 @@ public class DataServlet extends HttpServlet {
     }
 
     jsonObject.put("comments", comments);
-    String json = toJson(jsonObject);
     response.setContentType("application/json;");
-    response.getWriter().println(json);
+    response.getWriter().println(toJson(jsonObject));
   }
 
   private String toJson(JSONObject jsonObject) {
     Gson gson = new Gson();
-    String json = gson.toJson(jsonObject);
-    return json;
+    return gson.toJson(jsonObject);
   }
 }
