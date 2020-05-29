@@ -1,7 +1,22 @@
 #content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+  text-align: center;
+}
+
+img {
+  height: auto;
+  margin-top: 30px;
+  width: 500px;
+}
+
+.profile {
+  border-radius: 100%;
+}
+
+.gallery {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 #greeting-container {
