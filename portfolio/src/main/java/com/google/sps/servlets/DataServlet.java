@@ -20,13 +20,34 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("<h1>Hello world!</h1>");
+    JSONArray comments = new JSONArray();
+    comments.add("<p>Hello</p>");
+    comments.add("<p>Bye</p>");
+
+    JSONObject jsonObject;
+    try {
+      jsonObject = new JSONObject();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to create JSON object.", e);
+    }
+
+    jsonObject.put("comments", comments);
+    response.setContentType("application/json;");
+    response.getWriter().println(toJson(jsonObject));
+  }
+
+  private String toJson(JSONObject jsonObject) {
+    Gson gson = new Gson();
+    return gson.toJson(jsonObject);
   }
 }
