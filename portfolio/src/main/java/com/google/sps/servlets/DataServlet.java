@@ -25,7 +25,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import java.util.ArrayList;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/comment")
 public class DataServlet extends HttpServlet {
 
@@ -45,16 +44,9 @@ public class DataServlet extends HttpServlet {
     response.getWriter().println(toJson(jsonObject));
   }
 
-  private String toJson(JSONObject jsonObject) {
-    Gson gson = new Gson();
-    return gson.toJson(jsonObject);
-  }
-
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String comment = request.getParameter("comment");
-
-    response.setContentType("application/json;");
 
     JSONObject jsonObject;
     try {
@@ -63,6 +55,7 @@ public class DataServlet extends HttpServlet {
       throw new RuntimeException("Failed to create JSON object.", e);
     }
 
+    response.setContentType("application/json;");
     if (comment == "" || comment == null) {
       jsonObject.put("error", "Bad request.");
       response.getWriter().println(toJson(jsonObject));
@@ -72,11 +65,10 @@ public class DataServlet extends HttpServlet {
     comments.add(comment);
     jsonObject.put("comments", comments);
     response.getWriter().println(toJson(jsonObject));
+  }
 
-
-    // game.takePlayerTurn(playerChoice);
-
-    // Redirect back to the HTML page.
-    // response.sendRedirect("/index.html");
+  private String toJson(JSONObject jsonObject) {
+    Gson gson = new Gson();
+    return gson.toJson(jsonObject);
   }
 }
