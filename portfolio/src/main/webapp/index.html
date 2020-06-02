@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <title>My Portfolio</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
+  
 </head>
 <body>
-  <div id="content">
+  <div class="content">
     <h1>My Portfolio</h1>
     <p>This is my portfolio.</p>
     <img src="images/profile.jpg" class="profile">
@@ -30,8 +30,19 @@
 
     <h2>Hidden talent</h2>
     <p>A hidden talent I have is piano because I never really perform or play in front of anyone. It's just something that I enjoy doing on my own and taking lessons. I only perform when I have to and I get enjoyment out of just learning and getting better.</p>
-    <button onclick="getComments()">Get comments</button>
-    <div id="comments"></div>
+    <button onclick="toggleComments()">Show/hide comments</button>
+
+    <h2>Comments</h2>
+    <div class="comment-section">
+      <form action="/comment" method="POST" class="comment-form">
+        <p>Leave a comment:</p>
+        <input type="text" name="comment" placeholder="Type something here..." class="comment-box">
+        <input type="submit" class="comment-submit">
+      </form>
+      <div class="comments"></div>
+    </div>
+    
   </div>
 </body>
+<script src="script.js"></script>
 </html>
