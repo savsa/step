@@ -14,7 +14,7 @@
 
 getComments();
 
-// submit a comment
+// Submits a comment to be stored in the server.
 document.querySelector('.comment-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const response = await fetch('/comment', {
@@ -26,15 +26,22 @@ document.querySelector('.comment-form').addEventListener('submit', async functio
     console.log('Could not submit comment');
   }
   const commentContainer = document.querySelector('.comments');
-  commentContainer.innerHTML += '<div class="comment">' + document.querySelector('.comment-box').value + '</div><br>';
+  let liComment = document.createElement('li');
+  liComment.innerText = document.querySelector('.comment-box').value;
+  liComment.className = 'comment';
+  commentContainer.append(liComment);
 });
 
 async function getComments() {
   const response = await fetch('/comment');
   const json = await response.json();
   const commentContainer = document.querySelector('.comments');
+  let liComment;
   for (const comment of json.comments) {
-    commentContainer.innerHTML += '<div class="comment">' + comment + '</div><br>';
+    liComment = document.createElement('li');
+    liComment.innerText = comment;
+    liComment.className = 'comment';
+    commentContainer.append(liComment);
   }
 }
 

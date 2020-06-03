@@ -21,4 +21,5 @@ img {
 
 .comments {
   display: block;
+  list-style: none;
 }
