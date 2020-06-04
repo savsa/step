@@ -23,13 +23,14 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
-/* Servlet that handles comment posting and fetching. */
+/* Servlet that handles comment deletion. */
 @WebServlet("/delete")
 public class DeleteDataServlet extends HttpServlet {
 
@@ -46,12 +47,14 @@ public class DeleteDataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    ArrayList<Key> keys = new ArrayList<Key>();
     for (Entity entity : results.asIterable()) {
-      Key key = entity.getKey();
-      datastore.delete(key);
+      keys.add(entity.getKey());
     }
+    datastore.delete(keys);
 
-    jsonObject.put("success", "Successfully deleted comments.");
+    jsonObject.put("message", "Successfully deleted comments.");
+    jsonObject.put("status", "success");
     response.setContentType("application/json;");
     response.getWriter().println(toJson(jsonObject));
   }

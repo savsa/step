@@ -22,7 +22,7 @@ document.querySelector('.comment-form').addEventListener('submit', async functio
     body: new URLSearchParams(new FormData(e.target)),
   });
   const json = await response.json();
-  if ('error' in json) {
+  if (json.status == "error") {
     console.log('Could not submit comment');
     return;
   }
@@ -63,7 +63,7 @@ async function deleteComments() {
     method: 'POST',
   });
   const json = await response.json();
-  if ('error' in json) {
+  if (json.status == "error") {
     console.log('Could not delete comments');
     return;
   }

@@ -39,12 +39,21 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int numComments = Integer.parseInt(request.getParameter("num"));
     JSONObject jsonObject;
     try {
       jsonObject = new JSONObject();
     } catch (Exception e) {
       throw new RuntimeException("Failed to create JSON object.", e);
+    }
+
+    int numComments;
+    try {
+      numComments = Integer.parseInt(request.getParameter("num"));
+    } catch (Exception e) {
+      jsonObject.put("message", "Bad request.");
+      jsonObject.put("status", "error");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
     }
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
@@ -76,7 +85,8 @@ public class DataServlet extends HttpServlet {
 
     response.setContentType("application/json;");
     if (comment == null || comment.isEmpty()) {
-      jsonObject.put("error", "Bad request.");
+      jsonObject.put("message", "Bad request.");
+      jsonObject.put("status", "error");
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().println(toJson(jsonObject));
       return;
@@ -89,7 +99,8 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(entity);
 
-    jsonObject.put("success", "Successfully created comment.");
+    jsonObject.put("message", "Successfully created comment.");
+    jsonObject.put("status", "success");
     response.getWriter().println(toJson(jsonObject));
   }
 
