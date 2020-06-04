@@ -28,7 +28,7 @@ img {
   padding: 5px 10px;
 }
 
-input[type=submit] {
+input[type=submit], button {
   background-color: #FF6341;
   border: none;
   border-radius: 10px;
@@ -50,4 +50,8 @@ ul {
   display: table;
   margin: 0 auto;
   text-align: center;
+}
+
+.comment {
+  margin: 15px;
 }

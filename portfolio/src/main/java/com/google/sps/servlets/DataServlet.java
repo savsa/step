@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import java.util.ArrayList;
 
 /* Servlet that handles comment posting and fetching. */
 @WebServlet("/comment")
@@ -65,7 +66,6 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String comment = request.getParameter("comment");
-    long timestamp = System.currentTimeMillis();
 
     JSONObject jsonObject;
     try {
@@ -77,13 +77,14 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json;");
     if (comment == null || comment.isEmpty()) {
       jsonObject.put("error", "Bad request.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().println(toJson(jsonObject));
       return;
     }
 
     Entity entity = new Entity("Comment");
     entity.setProperty("text", comment);
-    entity.setProperty("timestamp", timestamp);
+    entity.setProperty("timestamp", System.currentTimeMillis());
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(entity);

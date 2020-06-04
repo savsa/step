@@ -16,7 +16,6 @@ getComments(5);
 
 // Submits a comment to be stored in the server.
 document.querySelector('.comment-form').addEventListener('submit', async function(e) {
-  console.log('hello');
   e.preventDefault();
   const response = await fetch('/comment', {
     method: 'POST',
@@ -27,11 +26,7 @@ document.querySelector('.comment-form').addEventListener('submit', async functio
     console.log('Could not submit comment');
     return;
   }
-  const commentContainer = document.querySelector('.comments');
-  let liComment = document.createElement('li');
-  liComment.innerText = document.querySelector('.comment-box').value;
-  liComment.className = 'comment';
-  commentContainer.append(liComment);
+  appendComment(document.querySelector('.comment-box').value);
 });
 
 async function getComments(num) {
@@ -39,12 +34,8 @@ async function getComments(num) {
   const json = await response.json();
   const commentContainer = document.querySelector('.comments');
   commentContainer.innerHTML = '';
-  let liComment;
   for (const comment of json.comments) {
-    liComment = document.createElement('li');
-    liComment.innerText = comment;
-    liComment.className = 'comment';
-    commentContainer.append(liComment);
+    appendComment(comment);
   }
 }
 
@@ -59,6 +50,14 @@ function toggleComments() {
   comments.style.display = (comments.style.display == 'none') ? 'block' : 'none';
 }
 
+function appendComment(value) {
+  const commentContainer = document.querySelector('.comments');
+  let liComment = document.createElement('li');
+  liComment.innerText = value;
+  liComment.className = 'comment';
+  commentContainer.append(liComment);
+}
+
 async function deleteComments() {
   const response = await fetch('/delete', {
     method: 'POST',
@@ -70,4 +69,4 @@ async function deleteComments() {
   }
   const commentContainer = document.querySelector('.comments');
   commentContainer.innerHTML = '';
-}
+};
