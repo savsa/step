@@ -59,6 +59,7 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json;");
     if (comment == null || comment.isEmpty()) {
       jsonObject.put("error", "Bad request.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().println(toJson(jsonObject));
       return;
     }
