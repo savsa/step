@@ -14,25 +14,58 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Query;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/data")
+/* Servlet that handles comment posting and fetching. */
+@WebServlet("/comment")
 public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    JSONArray comments = new JSONArray();
-    comments.add("<p>Hello</p>");
-    comments.add("<p>Bye</p>");
+    int numComments = Integer.parseInt(request.getParameter("num"));
+    JSONObject jsonObject;
+    try {
+      jsonObject = new JSONObject();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to create JSON object.", e);
+    }
+
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    List<Entity> limitedResults = results.asList(FetchOptions.Builder.withLimit(numComments));
+
+    ArrayList<String> comments = new ArrayList<>();
+    for (Entity entity : limitedResults) {
+      String text = (String)entity.getProperty("text");
+      comments.add(text);
+    }
+
+    jsonObject.put("comments", comments);
+    response.setContentType("application/json;");
+    response.getWriter().println(toJson(jsonObject));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String comment = request.getParameter("comment");
+    long timestamp = System.currentTimeMillis();
 
     JSONObject jsonObject;
     try {
@@ -41,8 +74,21 @@ public class DataServlet extends HttpServlet {
       throw new RuntimeException("Failed to create JSON object.", e);
     }
 
-    jsonObject.put("comments", comments);
     response.setContentType("application/json;");
+    if (comment == null || comment.isEmpty()) {
+      jsonObject.put("error", "Bad request.");
+      response.getWriter().println(toJson(jsonObject));
+      return;
+    }
+
+    Entity entity = new Entity("Comment");
+    entity.setProperty("text", comment);
+    entity.setProperty("timestamp", timestamp);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(entity);
+
+    jsonObject.put("success", "Successfully created comment.");
     response.getWriter().println(toJson(jsonObject));
   }
 
