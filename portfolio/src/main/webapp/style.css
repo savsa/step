@@ -1,4 +1,4 @@
-#content {
+.content {
   text-align: center;
 }
 
@@ -19,6 +19,7 @@ img {
   justify-content: space-around;
 }
 
-#greeting-container {
-  margin-top: 20px;
+.comments {
+  display: block;
+  list-style: none;
 }

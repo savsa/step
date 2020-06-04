@@ -23,17 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import java.util.ArrayList;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/data")
+/* Servlet that handles comment posting and fetching. */
+@WebServlet("/comment")
 public class DataServlet extends HttpServlet {
+
+  private ArrayList<String> comments = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    JSONArray comments = new JSONArray();
-    comments.add("<p>Hello</p>");
-    comments.add("<p>Bye</p>");
-
     JSONObject jsonObject;
     try {
       jsonObject = new JSONObject();
@@ -43,6 +42,30 @@ public class DataServlet extends HttpServlet {
 
     jsonObject.put("comments", comments);
     response.setContentType("application/json;");
+    response.getWriter().println(toJson(jsonObject));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String comment = request.getParameter("comment");
+
+    JSONObject jsonObject;
+    try {
+      jsonObject = new JSONObject();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to create JSON object.", e);
+    }
+
+    response.setContentType("application/json;");
+    if (comment == null || comment.isEmpty()) {
+      jsonObject.put("error", "Bad request.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      response.getWriter().println(toJson(jsonObject));
+      return;
+    }
+
+    comments.add(comment);
+    jsonObject.put("comments", comments);
     response.getWriter().println(toJson(jsonObject));
   }
 

@@ -12,26 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['Identity theft is not a joke', 'I declare bankruptcy', 'I am a little stitious'];
+getComments();
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
-}
+// Submits a comment to be stored in the server.
+document.querySelector('.comment-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const response = await fetch('/comment', {
+    method: 'POST',
+    body: new URLSearchParams(new FormData(event.target)),
+  });
+  const json = await response.json();
+  if ('error' in json) {
+    console.log('Could not submit comment');
+    return;
+  }
+  appendComment(document.querySelector('.comment-box').value);
+});
 
 async function getComments() {
-  const response = await fetch('/data');
+  const response = await fetch('/comment');
   const json = await response.json();
-  const commentContainer = document.getElementById('comments');
+  const commentContainer = document.querySelector('.comments');
+  let liComment;
   for (const comment of json.comments) {
-    commentContainer.innerHTML += comment;
+    appendComment(comment);
   }
+}
+
+function toggleComments() {
+  let comments = document.querySelector('.comments');
+  comments.style.display = (comments.style.display == 'none') ? 'block' : 'none';
+}
+
+function appendComment(value) {
+  const commentContainer = document.querySelector('.comments');
+  let liComment = document.createElement('li');
+  liComment.innerText = value;
+  liComment.className = 'comment';
+  commentContainer.append(liComment);
 }
