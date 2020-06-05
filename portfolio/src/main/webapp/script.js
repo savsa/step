@@ -12,31 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-getComments();
+getComments(5);
 
 // Submits a comment to be stored in the server.
 document.querySelector('.comment-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const response = await fetch('/comment', {
     method: 'POST',
-    body: new URLSearchParams(new FormData(event.target)),
+    body: new URLSearchParams(new FormData(e.target)),
   });
   const json = await response.json();
-  if ('error' in json) {
+  if (json.status == "error") {
     console.log('Could not submit comment');
     return;
   }
   appendComment(document.querySelector('.comment-box').value);
 });
 
-async function getComments() {
-  const response = await fetch('/comment');
+async function getComments(num) {
+  const response = await fetch(`/comment?num=${num}`);
   const json = await response.json();
   const commentContainer = document.querySelector('.comments');
-  let liComment;
+  commentContainer.innerHTML = '';
   for (const comment of json.comments) {
     appendComment(comment);
   }
+}
+
+function rerequestComments() {
+  let numCommentsElem = document.querySelector('.num-comments');
+  let num = numCommentsElem.options[numCommentsElem.selectedIndex].value;
+  getComments(num);
 }
 
 function toggleComments() {
@@ -51,3 +57,16 @@ function appendComment(value) {
   liComment.className = 'comment';
   commentContainer.append(liComment);
 }
+
+async function deleteComments() {
+  const response = await fetch('/delete', {
+    method: 'POST',
+  });
+  const json = await response.json();
+  if (json.status == "error") {
+    console.log('Could not delete comments');
+    return;
+  }
+  const commentContainer = document.querySelector('.comments');
+  commentContainer.innerHTML = '';
+};

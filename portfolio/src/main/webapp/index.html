@@ -29,18 +29,28 @@
 
     <h2>Hidden talent</h2>
     <p>A hidden talent I have is piano because I never really perform or play in front of anyone. It's just something that I enjoy doing on my own and taking lessons. I only perform when I have to and I get enjoyment out of just learning and getting better.</p>
-    <button onclick="toggleComments()">Show/hide comments</button>
 
-    <h2>Comments</h2>
+    <h2>Comment Section</h2>
+    <button onclick="toggleComments()">Show/hide comments</button>
+    <button onclick="deleteComments()" class="deleteButton">Delete comments</button>
+    
     <div class="comment-section">
-      <form action="/comment" method="POST" class="comment-form">
-        <p>Leave a comment:</p>
+      <h3>Leave a comment:</h3>
+      <form class="comment-form">
         <input type="text" name="comment" placeholder="Type something here..." class="comment-box">
         <input type="submit" class="comment-submit">
       </form>
+      
+      <h3>Comments</h3>
+      <select name="num" class="num-comments" onchange="rerequestComments()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+      </select>
       <ul class="comments"></ul>
     </div>
-    
+
   </div>
   <script src="script.js"></script>
 </body>

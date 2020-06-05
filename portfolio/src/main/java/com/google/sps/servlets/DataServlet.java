@@ -14,13 +14,21 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Query;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import java.util.ArrayList;
@@ -29,8 +37,6 @@ import java.util.ArrayList;
 @WebServlet("/comment")
 public class DataServlet extends HttpServlet {
 
-  private ArrayList<String> comments = new ArrayList<String>();
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     JSONObject jsonObject;
@@ -38,6 +44,26 @@ public class DataServlet extends HttpServlet {
       jsonObject = new JSONObject();
     } catch (Exception e) {
       throw new RuntimeException("Failed to create JSON object.", e);
+    }
+
+    int numComments;
+    try {
+      numComments = Integer.parseInt(request.getParameter("num"));
+    } catch (Exception e) {
+      jsonObject.put("message", "Bad request.");
+      jsonObject.put("status", "error");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    List<Entity> limitedResults = results.asList(FetchOptions.Builder.withLimit(numComments));
+
+    ArrayList<String> comments = new ArrayList<>();
+    for (Entity entity : limitedResults) {
+      comments.add((String)entity.getProperty("text"));
     }
 
     jsonObject.put("comments", comments);
@@ -58,14 +84,22 @@ public class DataServlet extends HttpServlet {
 
     response.setContentType("application/json;");
     if (comment == null || comment.isEmpty()) {
-      jsonObject.put("error", "Bad request.");
+      jsonObject.put("message", "Bad request.");
+      jsonObject.put("status", "error");
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().println(toJson(jsonObject));
       return;
     }
 
-    comments.add(comment);
-    jsonObject.put("comments", comments);
+    Entity entity = new Entity("Comment");
+    entity.setProperty("text", comment);
+    entity.setProperty("timestamp", System.currentTimeMillis());
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(entity);
+
+    jsonObject.put("message", "Successfully created comment.");
+    jsonObject.put("status", "success");
     response.getWriter().println(toJson(jsonObject));
   }
 
