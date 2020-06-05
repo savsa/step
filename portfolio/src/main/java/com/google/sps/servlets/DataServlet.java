@@ -63,8 +63,7 @@ public class DataServlet extends HttpServlet {
 
     ArrayList<String> comments = new ArrayList<>();
     for (Entity entity : limitedResults) {
-      String text = (String)entity.getProperty("text");
-      comments.add(text);
+      comments.add((String)entity.getProperty("text"));
     }
 
     jsonObject.put("comments", comments);
