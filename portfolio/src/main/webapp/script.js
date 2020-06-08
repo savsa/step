@@ -70,3 +70,11 @@ async function deleteComments() {
   const commentContainer = document.querySelector('.comments');
   commentContainer.innerHTML = '';
 };
+
+/** Creates a map showing Columbia University and adds it to the page. */
+function createMap() {
+  const map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 40.808037, lng: -73.961982},
+    zoom: 16
+  });
+}

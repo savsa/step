@@ -55,3 +55,10 @@ ul {
 .comment {
   margin: 15px;
 }
+
+#map {
+  border: thin solid black;
+  height: 500px;
+  margin: 0 auto;
+  width: 500px;
+}
