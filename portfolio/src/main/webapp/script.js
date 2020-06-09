@@ -77,23 +77,34 @@ function createMap() {
     center: { lat: 40.808037, lng: -73.961982 },
     zoom: 16,
   });
+
   const schapiroMarker = new google.maps.Marker({
     position: {lat: 40.807901, lng: -73.965172},
     map: map,
     title: 'Schapiro piano'
   });
+  const schapiroInfo = new google.maps.InfoWindow({
+    content: 'This piano is an upright piano.'
+  });
+  schapiroInfo.open(map, schapiroMarker);
+
   const broadwayMarker = new google.maps.Marker({
     position: {lat: 40.806409, lng: -73.964332},
     map: map,
     title: 'Broadway piano'
   });
+  const broadwayInfo = new google.maps.InfoWindow({
+    content: 'This piano is an upright piano.'
+  });
+  broadwayInfo.open(map, broadwayMarker);
+
   const johnJayMarker = new google.maps.Marker({
     position: {lat: 40.805984, lng: -73.962651},
     map: map,
     title: 'John Jay piano'
   });
-
-  const johnJayInfoWindow =
-      new google.maps.InfoWindow({content: 'This piano is a grand piano. It\'s also in a dining hall.'});
-  johnJayInfoWindow.open(map, johnJayMarker);
+  const johnJayInfo = new google.maps.InfoWindow({
+    content: 'This piano is a grand piano. It\'s also in a dining hall.'
+  });
+  johnJayInfo.open(map, johnJayMarker);
 }
