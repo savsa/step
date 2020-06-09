@@ -73,8 +73,27 @@ async function deleteComments() {
 
 /** Creates a map showing Columbia University and adds it to the page. */
 function createMap() {
-  const map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40.808037, lng: -73.961982},
-    zoom: 16
+  const map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 40.808037, lng: -73.961982 },
+    zoom: 16,
   });
+  const schapiroMarker = new google.maps.Marker({
+    position: {lat: 40.807901, lng: -73.965172},
+    map: map,
+    title: 'Schapiro piano'
+  });
+  const broadwayMarker = new google.maps.Marker({
+    position: {lat: 40.806409, lng: -73.964332},
+    map: map,
+    title: 'Broadway piano'
+  });
+  const johnJayMarker = new google.maps.Marker({
+    position: {lat: 40.805984, lng: -73.962651},
+    map: map,
+    title: 'John Jay piano'
+  });
+
+  const johnJayInfoWindow =
+      new google.maps.InfoWindow({content: 'This piano is a grand piano. It\'s also in a dining hall.'});
+  johnJayInfoWindow.open(map, johnJayMarker);
 }
