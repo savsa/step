@@ -4,13 +4,17 @@
   <meta charset="UTF-8">
   <title>My Portfolio</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO0p7PnEgRuKtf1ctUYaVl06AFO9oWBKw"></script>
 </head>
-<body>
+<body onload="createMap()">
   <div class="content">
     <h1>My Portfolio</h1>
     <p>This is my portfolio.</p>
     <img src="images/profile.jpg" class="profile">
     <p>Hello, I'm Savion. I'm an incoming junior at Columbia University.</p>
+
+    <div id="map"></div>
+
     <h2>Projects I have worked on.</h2>
     <ul>
       <li><b>Kabloombox</b>: a web app that recommends foreign-language songs to you based off of your music preference.</li>

@@ -22,7 +22,7 @@ document.querySelector('.comment-form').addEventListener('submit', async functio
     body: new URLSearchParams(new FormData(e.target)),
   });
   const json = await response.json();
-  if (json.status == "error") {
+  if (json.status == 'error') {
     console.log('Could not submit comment');
     return;
   }
@@ -63,10 +63,52 @@ async function deleteComments() {
     method: 'POST',
   });
   const json = await response.json();
-  if (json.status == "error") {
+  if (json.status == 'error') {
     console.log('Could not delete comments');
     return;
   }
   const commentContainer = document.querySelector('.comments');
   commentContainer.innerHTML = '';
 };
+
+/** Creates a map showing Columbia University and adds it to the page. */
+function createMap() {
+  const map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 40.808037, lng: -73.961982},
+    zoom: 16,
+  });
+
+  createMarker(
+    map,
+    40.807901,
+    -73.965172,
+    'Schapiro piano',
+    'This piano is an upright piano.',
+  );
+  createMarker(
+    map,
+    40.806409,
+    -73.964332,
+    'Broadway piano',
+    'This piano is an upright piano.',
+  );
+  createMarker(
+    map,
+    40.805984,
+    -73.962651,
+    'John Jay piano',
+    'This piano is a grand piano. It\'s also in a dining hall.',
+  );
+}
+
+function createMarker(map, lat, lng, title, content) {
+  const marker = new google.maps.Marker({
+    position: {lat: lat, lng: lng},
+    map: map,
+    title: title,
+  });
+  const info = new google.maps.InfoWindow({
+    content: content,
+  });
+  info.open(map, marker);
+}
