@@ -81,18 +81,18 @@ async function createMap() {
   });
 
   for (piano of json) {
-    createMarker(map, piano.lat, piano.lng, piano.title, piano.info);
+    createMarker(map, piano);
   }
 }
 
-function createMarker(map, lat, lng, title, info) {
+function createMarker(map, piano) {
   const marker = new google.maps.Marker({
-    position: {lat: lat, lng: lng},
+    position: {lat: piano.lat, lng: piano.lng},
     map: map,
-    title: title,
+    title: piano.title,
   });
   const infoWindow = new google.maps.InfoWindow({
-    content: info,
+    content: piano.info,
   });
   infoWindow.open(map, marker);
 }
