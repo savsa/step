@@ -71,44 +71,28 @@ async function deleteComments() {
   commentContainer.innerHTML = '';
 };
 
-/** Creates a map showing Columbia University and adds it to the page. */
-function createMap() {
+/* Creates a map showing Columbia University and adds it to the page. */
+async function createMap() {
+  const response = await fetch('/piano-data');
+  const json = await response.json();
   const map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 40.808037, lng: -73.961982},
     zoom: 16,
   });
 
-  createMarker(
-    map,
-    40.807901,
-    -73.965172,
-    'Schapiro piano',
-    'This piano is an upright piano.',
-  );
-  createMarker(
-    map,
-    40.806409,
-    -73.964332,
-    'Broadway piano',
-    'This piano is an upright piano.',
-  );
-  createMarker(
-    map,
-    40.805984,
-    -73.962651,
-    'John Jay piano',
-    'This piano is a grand piano. It\'s also in a dining hall.',
-  );
+  for (piano of json) {
+    createMarker(map, piano);
+  }
 }
 
-function createMarker(map, lat, lng, title, content) {
+function createMarker(map, piano) {
   const marker = new google.maps.Marker({
-    position: {lat: lat, lng: lng},
+    position: {lat: piano.lat, lng: piano.lng},
     map: map,
-    title: title,
+    title: piano.title,
   });
-  const info = new google.maps.InfoWindow({
-    content: content,
+  const infoWindow = new google.maps.InfoWindow({
+    content: piano.info,
   });
-  info.open(map, marker);
+  infoWindow.open(map, marker);
 }
