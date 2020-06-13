@@ -39,12 +39,11 @@ async function load() {
   if (json.email == '') {
     let loginLink = document.createElement('a');
     loginLink.href = json.login_url;
-    loginLink.className = 'login-link'
+    loginLink.className = 'login-link';
     loginLink.innerText = 'Log in';
     nav.append(loginLink);
 
-    let form = document.querySelector('.comment-form');
-    form.style.display = 'none';
+    document.querySelector('.comment-form').style.display = 'none';
     return;
   }
 

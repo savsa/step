@@ -76,7 +76,6 @@ public class DataServlet extends HttpServlet {
     String email = userService.isUserLoggedIn() ? userService.getCurrentUser().getEmail() : "";
     jsonObject.put("email", email);
     jsonObject.put("login_url", userService.createLoginURL("/"));
-
     jsonObject.put("comments", comments);
     response.getWriter().println(toJson(jsonObject));
   }
