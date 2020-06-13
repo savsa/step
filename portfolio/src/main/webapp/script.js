@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-getComments(5);
+load();
 
 // Submits a comment to be stored in the server.
 document.querySelector('.comment-form').addEventListener('submit', async function(e) {
@@ -26,17 +26,38 @@ document.querySelector('.comment-form').addEventListener('submit', async functio
     console.log('Could not submit comment');
     return;
   }
-  appendComment(document.querySelector('.comment-box').value);
+  rerequestComments();
 });
+
+// Load the dynamic parts of the page like comments and the authentication status.
+async function load() {
+  const response = await fetch(`/comment?num=5`);
+  const json = await response.json();
+  appendComments(json.comments);
+
+  let nav = document.querySelector('.nav-content');
+  if (json.email == '') {
+    let loginLink = document.createElement('a');
+    loginLink.href = json.login_url;
+    loginLink.className = 'login-link'
+    loginLink.innerText = 'Log in';
+    nav.append(loginLink);
+
+    let form = document.querySelector('.comment-form');
+    form.style.display = 'none';
+    return;
+  }
+
+  // The user is logged in.
+  let p = document.createElement('p');
+  p.innerText = 'Welcome, ' + json.email;
+  nav.append(p);
+}
 
 async function getComments(num) {
   const response = await fetch(`/comment?num=${num}`);
   const json = await response.json();
-  const commentContainer = document.querySelector('.comments');
-  commentContainer.innerHTML = '';
-  for (const comment of json.comments) {
-    appendComment(comment);
-  }
+  appendComments(json.comments);
 }
 
 function rerequestComments() {
@@ -45,15 +66,23 @@ function rerequestComments() {
   getComments(num);
 }
 
+function appendComments(comments) {
+  const commentContainer = document.querySelector('.comments');
+  commentContainer.innerHTML = '';
+  for (const comment of comments) {
+    appendComment(comment);
+  }
+}
+
 function toggleComments() {
   let comments = document.querySelector('.comments');
   comments.style.display = (comments.style.display == 'none') ? 'block' : 'none';
 }
 
-function appendComment(value) {
+function appendComment(comment) {
   const commentContainer = document.querySelector('.comments');
   let liComment = document.createElement('li');
-  liComment.innerText = value;
+  liComment.innerText = `${comment.email}: ${comment.text}`;
   liComment.className = 'comment';
   commentContainer.append(liComment);
 }

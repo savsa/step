@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>My Portfolio</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO0p7PnEgRuKtf1ctUYaVl06AFO9oWBKw"></script>
 </head>
 <body onload="createMap()">
+  <nav>
+    <div class="nav-content"></div>
+  </nav>
   <div class="content">
     <h1>My Portfolio</h1>
     <p>This is my portfolio.</p>
@@ -40,12 +43,12 @@
     <button onclick="deleteComments()" class="deleteButton">Delete comments</button>
     
     <div class="comment-section">
-      <h3>Leave a comment:</h3>
       <form class="comment-form">
+        <h3>Leave a comment:</h3>
         <input type="text" name="comment" placeholder="Type something here..." class="comment-box">
         <input type="submit" class="comment-submit">
       </form>
-      
+    
       <h3>Comments</h3>
       <select name="num" class="num-comments" onchange="rerequestComments()">
         <option value="5">5</option>
