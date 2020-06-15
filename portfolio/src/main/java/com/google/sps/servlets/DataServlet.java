@@ -21,8 +21,12 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.data.Comment;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -31,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import java.util.ArrayList;
 
 /* Servlet that handles comment posting and fetching. */
 @WebServlet("/comment")
@@ -46,6 +49,7 @@ public class DataServlet extends HttpServlet {
       throw new RuntimeException("Failed to create JSON object.", e);
     }
 
+    response.setContentType("application/json;");
     int numComments;
     try {
       numComments = Integer.parseInt(request.getParameter("num"));
@@ -56,25 +60,28 @@ public class DataServlet extends HttpServlet {
       return;
     }
 
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     List<Entity> limitedResults = results.asList(FetchOptions.Builder.withLimit(numComments));
 
-    ArrayList<String> comments = new ArrayList<>();
+    ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : limitedResults) {
-      comments.add((String)entity.getProperty("text"));
+      String text = (String)entity.getProperty("text");
+      String email = (String)entity.getProperty("email");
+      comments.add(new Comment(text, email));
     }
 
+    UserService userService = UserServiceFactory.getUserService();
+    String email = userService.isUserLoggedIn() ? userService.getCurrentUser().getEmail() : "";
+    jsonObject.put("email", email);
+    jsonObject.put("login_url", userService.createLoginURL("/"));
     jsonObject.put("comments", comments);
-    response.setContentType("application/json;");
     response.getWriter().println(toJson(jsonObject));
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String comment = request.getParameter("comment");
-
     JSONObject jsonObject;
     try {
       jsonObject = new JSONObject();
@@ -82,7 +89,15 @@ public class DataServlet extends HttpServlet {
       throw new RuntimeException("Failed to create JSON object.", e);
     }
 
+    UserService userService = UserServiceFactory.getUserService();
+    if (!userService.isUserLoggedIn()) {
+      jsonObject.put("message", "Unauthorized.");
+      jsonObject.put("status", "error");
+      return;
+    }
+
     response.setContentType("application/json;");
+    String comment = request.getParameter("comment");
     if (comment == null || comment.isEmpty()) {
       jsonObject.put("message", "Bad request.");
       jsonObject.put("status", "error");
@@ -93,6 +108,7 @@ public class DataServlet extends HttpServlet {
 
     Entity entity = new Entity("Comment");
     entity.setProperty("text", comment);
+    entity.setProperty("email", userService.getCurrentUser().getEmail());
     entity.setProperty("timestamp", System.currentTimeMillis());
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -104,7 +120,6 @@ public class DataServlet extends HttpServlet {
   }
 
   private String toJson(JSONObject jsonObject) {
-    Gson gson = new Gson();
-    return gson.toJson(jsonObject);
+    return new Gson().toJson(jsonObject);
   }
 }
