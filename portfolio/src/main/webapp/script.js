@@ -48,9 +48,9 @@ async function load() {
   }
 
   // The user is logged in.
-  let p = document.createElement('p');
-  p.innerText = 'Welcome, ' + json.email;
-  nav.append(p);
+  let userNameElem = document.createElement('p');
+  userNameElem.innerText = 'Welcome, ' + json.email;
+  nav.append(userNameElem);
 }
 
 async function getComments(num) {
